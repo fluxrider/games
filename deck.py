@@ -32,6 +32,12 @@ class Deck:
   def place_shuffle(s, value):
     s.shuffle.append(value)
 
+  def reshuffle(s):
+    s.shuffle.extend(s.top)
+    s.shuffle.extend(s.bottom)
+    s.top.clear()
+    s.bottom.clear()
+
   # utils
   def __len__(s):
     return len(s.top) + len(s.shuffle) + len(s.bottom)
