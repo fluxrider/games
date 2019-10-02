@@ -5,11 +5,14 @@ import os
 os.environ["KIVY_NO_ENV_CONFIG"] = "1" # TMP workaround until https://github.com/kivy/kivy/pull/6540
 os.environ["KCFG_KIVY_LOG_LEVEL"] = "warning"
 
+# TODO right/middle click add red circle. WTF?
+
 # kivy is sadly an import intensive library
 import kivy
 import kivy.app
 import kivy.uix.boxlayout
 import kivy.uix.image
+import kivy.uix.togglebutton
 import deck as games
 
 # TODO app icon
@@ -28,7 +31,7 @@ class App(kivy.app.App):
     for widget in widgets:
       if widget.collide_point(*touch.pos):
         s.touch_list.append(widget)
-    return True
+    return False
 
   def on_touch_up(s, w, touch):
     # TODO: collision doesn't take into account that the actual image may not cover the entire image widget
@@ -54,7 +57,7 @@ class App(kivy.app.App):
           if len(s.deck) == 0: s.deck_layout.remove_widget(s.back)
 
     s.touch_list = []
-    return True
+    return False
 
   def build(s):
     s.title = 'Deck Test'
@@ -73,8 +76,13 @@ class App(kivy.app.App):
     layout = kivy.uix.boxlayout.BoxLayout(padding=5, spacing=5, orientation='vertical')
     deck_layout = kivy.uix.boxlayout.BoxLayout(spacing=5)
     hand_layout = kivy.uix.boxlayout.BoxLayout(spacing=5)
+    ctl_layout = kivy.uix.boxlayout.BoxLayout(spacing=5)
     layout.add_widget(deck_layout)
     layout.add_widget(hand_layout)
+    layout.add_widget(ctl_layout)
+    ctl_layout.add_widget(kivy.uix.togglebutton.ToggleButton(group='place', text='top', state='down'))
+    ctl_layout.add_widget(kivy.uix.togglebutton.ToggleButton(group='place', text='shuffle'))
+    ctl_layout.add_widget(kivy.uix.togglebutton.ToggleButton(group='place', text='bottom'))
 
     # sync presentation
     if len(deck) > 0: deck_layout.add_widget(back)
