@@ -18,47 +18,6 @@ import deck as games
 # TODO app icon
 class App(kivy.app.App):
 
-  def __init__(s):
-    super(App, s).__init__()
-    s.hand_layout = None
-    s.deck_layout = None
-    s.deck = None
-    s.back = None
-    s.touch_list = []
-
-  def on_touch_down(s, w, touch):
-    widgets = s.hand_layout.children + s.deck_layout.children
-    for widget in widgets:
-      if widget.collide_point(*touch.pos):
-        s.touch_list.append(widget)
-    return False
-
-  def on_touch_up(s, w, touch):
-    # TODO: collision doesn't take into account that the actual image may not cover the entire image widget
-
-    # card
-    for card in s.hand_layout.children[:]:
-      if card.collide_point(*touch.pos):
-        if card in s.touch_list:
-          # remove card from hand
-          s.hand_layout.remove_widget(card)
-          # show the back cover image if deck will not be empty anymore
-          if len(s.deck) == 0: s.deck_layout.add_widget(s.back)
-          # place it on the deck
-          s.deck.place_top(card)
-
-    # deck
-    for card in s.deck_layout.children:
-      if card.collide_point(*touch.pos):
-        if card in s.touch_list:
-          # draw a card
-          s.hand_layout.add_widget(s.deck.deal())
-          # remove back cover image if deck is empty
-          if len(s.deck) == 0: s.deck_layout.remove_widget(s.back)
-
-    s.touch_list = []
-    return False
-
   def build(s):
     s.title = 'Deck Test'
 
@@ -87,15 +46,50 @@ class App(kivy.app.App):
     # sync presentation
     if len(deck) > 0: deck_layout.add_widget(back)
 
-    # events
-    layout.bind(on_touch_up=s.on_touch_up)
-    layout.bind(on_touch_down=s.on_touch_down)
+    # touch events
+    touch_list = []
 
-    # member variable mapping
-    s.hand_layout = hand_layout
-    s.deck_layout = deck_layout
-    s.deck = deck
-    s.back = back
+    def on_touch_down(what, touch):
+      # store the widgets the touch down collides with so we can match it in touch_up
+      nonlocal touch_list
+      widgets = hand_layout.children + deck_layout.children
+      for widget in widgets:
+        if widget.collide_point(*touch.pos):
+          touch_list.append(widget)
+      return False
+
+    def on_touch_up(what, touch):
+      # TODO: collision doesn't take into account that the actual image may not cover the entire image widget
+
+      # TODO find a way to have a handler for deck/hand instead of doing two separate collision loops
+      # TODO just go through the widgets in touch_list
+
+      # card
+      for card in hand_layout.children[:]:
+        if card.collide_point(*touch.pos):
+          if card in touch_list:
+            # remove card from hand
+            hand_layout.remove_widget(card)
+            # show the back cover image if deck will not be empty anymore
+            if len(deck) == 0: deck_layout.add_widget(back)
+            # place it on the deck
+            deck.place_top(card)
+
+      # deck
+      for card in deck_layout.children:
+        if card.collide_point(*touch.pos):
+          if card in touch_list:
+            # draw a card
+            hand_layout.add_widget(deck.deal())
+            # remove back cover image if deck is empty
+            if len(deck) == 0: deck_layout.remove_widget(back)
+
+      touch_list.clear()
+      return False
+
+    # events
+    layout.bind(on_touch_up=on_touch_up)
+    layout.bind(on_touch_down=on_touch_down)
 
     return layout
 
