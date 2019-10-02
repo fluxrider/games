@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import random
 
 # This deck does not pre-shuffle (i.e. the new order isn't stored in memory)
