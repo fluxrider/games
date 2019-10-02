@@ -21,22 +21,33 @@ class App(kivy.app.App):
     s.deck_layout = None
     s.deck = None
     s.back = None
+    s.touch_list = []
 
-  def on_touch_up(s, instance, touch):
+  def on_touch_down(s, w, touch):
+    widgets = s.hand_layout.children + s.deck_layout.children
+    for widget in widgets:
+      if widget.collide_point(*touch.pos):
+        s.touch_list.append(widget)
+    return True
+
+  def on_touch_up(s, w, touch):
     # TODO: collision doesn't take into account that the actual image may not cover the entire image widget
-    # TODO: touch_down/up match
 
     # card
     for card in s.hand_layout.children:
       if card.collide_point(*touch.pos):
-        print(card)
+        if card in s.touch_list:
+          print(card)
 
     # deck
     for card in s.deck_layout.children:
       if card.collide_point(*touch.pos):
-        s.hand_layout.add_widget(s.deck.deal())
-        if len(s.deck) == 0:
-          s.deck_layout.remove_widget(s.back)
+        if card in s.touch_list:
+          s.hand_layout.add_widget(s.deck.deal())
+          if len(s.deck) == 0:
+            s.deck_layout.remove_widget(s.back)
+
+    s.touch_list = []
     return True
 
   def build(s):
@@ -62,6 +73,7 @@ class App(kivy.app.App):
 
     # events
     layout.bind(on_touch_up=s.on_touch_up)
+    layout.bind(on_touch_down=s.on_touch_down)
 
     # member variable mapping
     s.hand_layout = hand_layout
