@@ -1,19 +1,21 @@
 #!/usr/bin/env python
 
-import os
+import deck as games
 
+# reduce default verbosity of kivy logs
+import os
 os.environ["KIVY_NO_ENV_CONFIG"] = "1" # TMP workaround until https://github.com/kivy/kivy/pull/6540
 os.environ["KCFG_KIVY_LOG_LEVEL"] = "warning"
 
-# TODO right/middle click add red circle. WTF?
-
-# kivy is sadly an import intensive library
 import kivy
+# disable multi-touch emulation, which adds red circle all over when using non-left-click buttons
+import kivy.config
+kivy.config.Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+# kivy is sadly an import intensive library
 import kivy.app
 import kivy.uix.boxlayout
 import kivy.uix.image
 import kivy.uix.togglebutton
-import deck as games
 
 # TODO app icon
 class App(kivy.app.App):
