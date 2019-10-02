@@ -25,10 +25,7 @@ class App(kivy.app.App):
 
     # load 5 cards
     back = kivy.uix.image.Image(source='res/cardBack_green2.png', allow_stretch=True)
-    cards = []
-    files = games.Deck(os.listdir('res/suits')).ndeal(5)
-    for filename in files:
-      cards.append(kivy.uix.image.Image(source=f'res/suits/{filename}', allow_stretch=True))
+    cards = [kivy.uix.image.Image(source=f'res/suits/{filename}', allow_stretch=True) for filename in games.Deck(os.listdir('res/suits')).ndeal(5)]
 
     # create deck
     deck = games.Deck(cards)
