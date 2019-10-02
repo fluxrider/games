@@ -8,7 +8,7 @@ os.environ["KIVY_NO_ENV_CONFIG"] = "1" # TMP workaround until https://github.com
 os.environ["KCFG_KIVY_LOG_LEVEL"] = "warning"
 
 import kivy
-# disable multi-touch emulation, which adds red circle all over when using non-left-click buttons
+# disable multi-touch emulation, which adds red circles all over when using non-left-click buttons
 import kivy.config
 kivy.config.Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
 # kivy is sadly an import intensive library
@@ -17,11 +17,11 @@ import kivy.uix.boxlayout
 import kivy.uix.image
 import kivy.uix.togglebutton
 
-# TODO app icon
 class App(kivy.app.App):
 
   def build(s):
     s.title = 'Deck Test'
+    s.icon = 'res/suits/cardSpades2.png'
 
     # load 5 cards
     back = kivy.uix.image.Image(source='res/cardBack_green2.png', allow_stretch=True)
