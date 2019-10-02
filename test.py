@@ -23,12 +23,11 @@ class App(kivy.app.App):
     s.title = 'Deck Test'
     s.icon = 'res/suits/cardSpades2.png'
 
-    # load 5 cards
-    back = kivy.uix.image.Image(source='res/cardBack_green2.png', allow_stretch=True)
+    # load 5 cards and make a deck with them
     cards = [kivy.uix.image.Image(source=f'res/suits/{filename}', allow_stretch=True) for filename in games.Deck(os.listdir('res/suits')).ndeal(5)]
-
-    # create deck
     deck = games.Deck(cards)
+    # load back cover image
+    back_cover = kivy.uix.image.Image(source='res/cardBack_green2.png', allow_stretch=True)
 
     # layout
     layout = kivy.uix.boxlayout.BoxLayout(padding=5, spacing=5, orientation='vertical')
@@ -43,7 +42,7 @@ class App(kivy.app.App):
     ctl_layout.add_widget(kivy.uix.togglebutton.ToggleButton(group='place', text='bottom'))
 
     # sync presentation
-    if len(deck) > 0: deck_layout.add_widget(back)
+    if len(deck) > 0: deck_layout.add_widget(back_cover)
 
     # touch events
     touch_list = []
@@ -70,7 +69,7 @@ class App(kivy.app.App):
             # remove card from hand
             hand_layout.remove_widget(card)
             # show the back cover image if deck will not be empty anymore
-            if len(deck) == 0: deck_layout.add_widget(back)
+            if len(deck) == 0: deck_layout.add_widget(back_cover)
             # place it on the deck
             deck.place_top(card)
 
@@ -81,12 +80,11 @@ class App(kivy.app.App):
             # draw a card
             hand_layout.add_widget(deck.deal())
             # remove back cover image if deck is empty
-            if len(deck) == 0: deck_layout.remove_widget(back)
+            if len(deck) == 0: deck_layout.remove_widget(back_cover)
 
       touch_list.clear()
       return False
 
-    # events
     layout.bind(on_touch_up=on_touch_up)
     layout.bind(on_touch_down=on_touch_down)
 
