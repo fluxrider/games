@@ -49,7 +49,6 @@ class App(kivy.app.App):
 
     def on_touch_down(what, touch):
       # store the widgets the touch down collides with so we can match it in touch_up
-      nonlocal touch_list
       widgets = hand_layout.children + deck_layout.children
       for widget in widgets:
         if widget.collide_point(*touch.pos):
