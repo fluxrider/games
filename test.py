@@ -44,6 +44,16 @@ class App(kivy.app.App):
     # sync presentation
     if len(deck) > 0: deck_layout.add_widget(back_cover)
 
+    # radio button helper
+    def get_selected_placement_func():
+      text = 'top'
+      for widget in ctl_layout.children:
+        if widget.state == 'down':
+          text = widget.text
+      if text == 'shuffle': return deck.place_shuffle
+      if text == 'bottom': return deck.place_bottom
+      return deck.place_top
+
     # touch events
     touch_list = []
 
@@ -67,7 +77,8 @@ class App(kivy.app.App):
             # show the back cover image if deck will not be empty anymore
             if len(deck) == 0: deck_layout.add_widget(back_cover)
             # place it on the deck
-            deck.place_top(widget)
+            get_selected_placement_func()(widget)
+
           # deck
           if widget in deck_layout.children:
             # draw a card
