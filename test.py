@@ -58,24 +58,18 @@ class App(kivy.app.App):
     def on_touch_up(what, touch):
       # TODO: collision doesn't take into account that the actual image may not cover the entire image widget
 
-      # TODO find a way to have a handler for deck/hand instead of doing two separate collision loops
-      # TODO just go through the widgets in touch_list
-
-      # card
-      for card in hand_layout.children[:]:
-        if card.collide_point(*touch.pos):
-          if card in touch_list:
+      for widget in touch_list:
+        if widget.collide_point(*touch.pos):
+          # hand
+          if widget in hand_layout.children:
             # remove card from hand
-            hand_layout.remove_widget(card)
+            hand_layout.remove_widget(widget)
             # show the back cover image if deck will not be empty anymore
             if len(deck) == 0: deck_layout.add_widget(back_cover)
             # place it on the deck
-            deck.place_top(card)
-
-      # deck
-      for card in deck_layout.children:
-        if card.collide_point(*touch.pos):
-          if card in touch_list:
+            deck.place_top(widget)
+          # deck
+          if widget in deck_layout.children:
             # draw a card
             hand_layout.add_widget(deck.deal())
             # remove back cover image if deck is empty
