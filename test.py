@@ -34,18 +34,24 @@ class App(kivy.app.App):
     # TODO: collision doesn't take into account that the actual image may not cover the entire image widget
 
     # card
-    for card in s.hand_layout.children:
+    for card in s.hand_layout.children[:]:
       if card.collide_point(*touch.pos):
         if card in s.touch_list:
-          print(card)
+          # remove card from hand
+          s.hand_layout.remove_widget(card)
+          # show the back cover image if deck will not be empty anymore
+          if len(s.deck) == 0: s.deck_layout.add_widget(s.back)
+          # place it on the deck
+          s.deck.place_top(card)
 
     # deck
     for card in s.deck_layout.children:
       if card.collide_point(*touch.pos):
         if card in s.touch_list:
+          # draw a card
           s.hand_layout.add_widget(s.deck.deal())
-          if len(s.deck) == 0:
-            s.deck_layout.remove_widget(s.back)
+          # remove back cover image if deck is empty
+          if len(s.deck) == 0: s.deck_layout.remove_widget(s.back)
 
     s.touch_list = []
     return True
@@ -63,13 +69,15 @@ class App(kivy.app.App):
     # create deck
     deck = games.Deck(cards)
 
-    # layout and sync presentation
+    # layout
     layout = kivy.uix.boxlayout.BoxLayout(padding=5, spacing=5, orientation='vertical')
     deck_layout = kivy.uix.boxlayout.BoxLayout(spacing=5)
     hand_layout = kivy.uix.boxlayout.BoxLayout(spacing=5)
     layout.add_widget(deck_layout)
     layout.add_widget(hand_layout)
-    deck_layout.add_widget(back)
+
+    # sync presentation
+    if len(deck) > 0: deck_layout.add_widget(back)
 
     # events
     layout.bind(on_touch_up=s.on_touch_up)
