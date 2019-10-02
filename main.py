@@ -8,9 +8,12 @@ os.environ["KIVY_NO_ENV_CONFIG"] = "1" # TMP workaround until https://github.com
 os.environ["KCFG_KIVY_LOG_LEVEL"] = "warning"
 
 import kivy
+
 # disable multi-touch emulation, which adds red circles all over when using non-left-click buttons
-import kivy.config
-kivy.config.Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+# however, it break and duplicates android touch events
+#import kivy.config
+#kivy.config.Config.set('input', 'mouse', 'mouse,multitouch_on_demand')
+
 # kivy is sadly an import intensive library
 import kivy.app
 import kivy.uix.boxlayout
